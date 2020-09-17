@@ -2,6 +2,7 @@
 Simple graph implementation
 """
 from collections import deque
+
 from util import Stack, Queue  # These may come in handy
 
 
@@ -145,31 +146,26 @@ class Graph:
         This should be done using recursion.
         """
         discovered = set()
+        return self.dfs_recursive_helper([starting_vertex], destination_vertex, discovered)
 
-        def dfs(path):
-            last_vertex = path[-1]
+    def dfs_recursive_helper(self, curr_path, destination_vertex, discovered):
+        curr_vertex = curr_path[-1]
+        print(curr_path)
+        if curr_vertex == destination_vertex:
+            return curr_path
 
-            if last_vertex in discovered:
-                return None
+        discovered.add(curr_vertex)
 
-            else:
-                discovered.add(last_vertex)
+        for neighbor in self.get_neighbors(curr_vertex):
+            if neighbor not in discovered:
+                newPath = list(curr_path)
+                newPath.append(neighbor)
+                res = self.dfs_recursive_helper(
+                    newPath, destination_vertex, discovered)
+                if len(res) > 0:
+                    return res
 
-            if last_vertex == destination_vertex:
-                return path
-
-            for neighbor in self.get_neighbors(last_vertex):
-                next_path = path[:]
-                next_path.append(neighbor)
-
-                found = dfs(next_path)
-
-                if found:
-                    return found
-
-            return None
-
-        return dfs([starting_vertex])
+        return []
 
 
 if __name__ == '__main__':

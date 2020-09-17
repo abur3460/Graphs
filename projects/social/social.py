@@ -1,6 +1,11 @@
+import random
+from collections import deque
+
+
 class User:
     def __init__(self, name):
         self.name = name
+
 
 class SocialGraph:
     def __init__(self):
@@ -45,20 +50,56 @@ class SocialGraph:
         # !!!! IMPLEMENT ME
 
         # Add users
+        for i in range(0, num_users):
+            self.add_user(f"User {i}")
 
         # Create friendships
+        possible_friendships = []
+
+        for user_id in self.users:
+            for friend_id in range(user_id + 1, self.last_id + 1):
+                possible_friendships.append((user_id, friend_id))
+
+        random.shuffle(possible_friendships)
+
+        N = num_users * avg_friendships
+        for i in range(N):
+            friendship = possible_friendships[i]
+            # user_id, friend_id = friendship
+            user_id = friendship[0]
+            friend_id = friendship[1]
+            self.add_friendship(user_id, friend_id)
 
     def get_all_social_paths(self, user_id):
         """
         Takes a user's user_id as an argument
-
         Returns a dictionary containing every user in that user's
         extended network with the shortest friendship path between them.
-
         The key is the friend's ID and the value is the path.
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+
+        q = deque()
+
+        q.append([user_id])
+
+        while len(q) > 0:
+            path = q.pop()
+
+            node = path[-1]
+
+            if node not in visited:
+                visited[node] = path
+
+                friends = self.friendships[node]
+
+                for friend in friends:
+                    path_copy = path.copy()
+                    path_copy.append(friend)
+
+                    q.append(path_copy)
+
         return visited
 
 
